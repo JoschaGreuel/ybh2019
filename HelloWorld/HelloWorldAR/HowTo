@@ -3,6 +3,8 @@ Install Android Studio
 Follow instructions on: 
 https://blog.flexiple.com/build-your-first-android-ar-app-using-arcore-and-sceneform/
 
+Use this object: https://poly.google.com/view/1YE8U35HXsI
+
 Changes you have to apply before the build works:
 1.In File Menu → Project Structure → Project, change Project Language Level to 8.0 - Lambdas, type annotations etc.
 
