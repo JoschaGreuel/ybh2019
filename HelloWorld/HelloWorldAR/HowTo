@@ -1,8 +1,23 @@
 Install Android Studio
+Open the project
+In File Menu → Project Structure → Project, change Project Language Level to 8.0 - Lambdas, type annotations etc.
+Connect your device and build
 
-Follow instructions on: 
+
+
+
+
+
+
+
+
+
+
+Instructions I took:
+--------------------
+Follow instructions on : 
 https://blog.flexiple.com/build-your-first-android-ar-app-using-arcore-and-sceneform/
-
+HOWEVER; SKIP THE PLUGIN INSTALL STEP, rather add: implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.9.0' to app level gradle.build and classpath 'com.google.ar.sceneform:plugin:1.9.0' to project level one 
 Use this object: https://poly.google.com/view/1YE8U35HXsI
 
 Changes you have to apply before the build works:
