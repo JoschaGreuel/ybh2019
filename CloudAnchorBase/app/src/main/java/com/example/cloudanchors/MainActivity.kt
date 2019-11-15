@@ -25,6 +25,8 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import com.google.ar.sceneform.math.Vector3
 import android.widget.Toast
 import com.google.ar.sceneform.rendering.ViewRenderable
+import android.content.Intent
+import android.view.View
 
 
 class MainActivity : AppCompatActivity() {
@@ -59,6 +61,8 @@ class MainActivity : AppCompatActivity() {
         arFragment.planeDiscoveryController.hide()
         arFragment.planeDiscoveryController.setInstructionView(null)
 
+        btn_menu.setVisibility(View.INVISIBLE)
+
         //Create the beer renderable
         ModelRenderable.builder()
             //get the context of the ARFragment and pass the name of your .sfb file
@@ -82,6 +86,12 @@ class MainActivity : AppCompatActivity() {
             val dialog = ResolveDialogFragment()
             dialog.setOkListener(this::onResolveOkPressed)
             dialog.show(supportFragmentManager, "Resolve")
+        }
+        btn_menu.setOnClickListener{
+            val intent1 = Intent(this, OrderActivity::class.java)
+            intent1.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP //
+            this.startActivity(intent1)
+            finish()
         }
 
         btn_drawBeer.setOnClickListener{
@@ -131,9 +141,9 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Error: Cloud anchor not available", Toast.LENGTH_SHORT).show()
             }
         }
-
         arFragment.setOnTapArPlaneListener { hitResult, plane, _ ->
             if (plane.type != Plane.Type.HORIZONTAL_UPWARD_FACING || appAnchorState != AppAnchorState.NONE) {
+
                 return@setOnTapArPlaneListener
             }
 
@@ -166,9 +176,12 @@ class MainActivity : AppCompatActivity() {
 
     @Synchronized
     private fun checkUpdatedAnchor() {
+
         if (appAnchorState != AppAnchorState.HOSTING && appAnchorState != AppAnchorState.RESOLVING)
+            //btn_menu.getBackground().setAlpha(0);
             return
 
+        //btn_menu.setVisibility(View.VISIBLE)
         val cloudState: CloudAnchorState = cloudAnchor?.cloudAnchorState!!
 
         if (appAnchorState == AppAnchorState.HOSTING) {
@@ -183,6 +196,10 @@ class MainActivity : AppCompatActivity() {
                 clipboard.setPrimaryClip(clip)
                 snackbarHelper.showMessageWithDismiss(this, "Anchor hosted, key in Clipboard.")// $shortCode")
                 appAnchorState = AppAnchorState.HOSTED
+                //btn_menu.getBackground().setAlpha(255);
+                //btn_menu.currentTextColor().setAlpha(255);
+                //btn_menu.setVisibility(View.VISIBLE)
+                btn_menu.setVisibility(View.VISIBLE)
             }
         } else if (appAnchorState == AppAnchorState.RESOLVING) {
             if (cloudState.isError) {
