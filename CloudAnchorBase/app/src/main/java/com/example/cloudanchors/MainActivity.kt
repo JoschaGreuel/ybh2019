@@ -29,9 +29,14 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import com.google.ar.sceneform.rendering.ViewRenderable
 import android.content.Intent
+import android.os.StrictMode
 import android.view.View
 import kotlinx.android.synthetic.main.pickup_selection.*
+import okhttp3.*
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
+import java.io.IOException;
 
 
 class MainActivity : AppCompatActivity() {
@@ -67,6 +72,24 @@ class MainActivity : AppCompatActivity() {
         arFragment.planeDiscoveryController.setInstructionView(null)
 
         btn_menu.setVisibility(View.INVISIBLE)
+
+        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build())
+
+        val url = "https://api.myjson.com/bins/x1ryy"
+        var request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        val response = client.newCall(request).execute()
+
+        snackbarHelper.showMessageWithDismiss(this, response.body()!!.string())
+
+        val JSON = MediaType.parse("application/json; charset=utf-8")
+        var body = RequestBody.create(JSON, "{\"key_updated\":\"value_updated\"}")
+        request = Request.Builder()
+            .url(url)
+            .put(body) // here we use put
+            .build();
+        client.newCall(request).execute()
+
 
         //Create the beer renderable
         ModelRenderable.builder()
