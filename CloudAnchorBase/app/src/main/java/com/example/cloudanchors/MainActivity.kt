@@ -22,9 +22,15 @@ import androidx.core.app.ComponentActivity
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.widget.Button
+import android.widget.LinearLayout
 import com.google.ar.sceneform.math.Vector3
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.google.ar.sceneform.rendering.ViewRenderable
+import kotlinx.android.synthetic.main.pickup_selection.*
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -121,6 +127,31 @@ class MainActivity : AppCompatActivity() {
                     buttonTransformable.setParent(anchorNode)
                     transformableNode.worldPosition = Vector3(0f, 0f, 0f)
 
+                    if(this@MainActivity.pickupSelectionRenderable != null) {
+
+                        val pickupView = this@MainActivity.pickupSelectionRenderable!!.getView()
+
+                        val pickupSelectionLayout =
+                            this@MainActivity.pickupSelectionRenderable!!.getView() as LinearLayout
+
+
+                        val acceptButton = pickupSelectionLayout.getChildAt(0) as Button
+                        acceptButton.setOnClickListener{
+                            Toast.makeText(
+                                applicationContext,
+                                "Order accepted. Now move!",
+                                Toast.LENGTH_SHORT
+                            ).show();
+
+                            // now remove all rendered elements again
+                            arFragment.arSceneView.scene.removeChild(anchorNode)
+                            anchorNode.anchor!!.detach()
+                            anchorNode.setParent(null)
+                        }
+
+                    } else {
+                        Toast.makeText(applicationContext, "PickupSelectionRenderable is null", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
 
