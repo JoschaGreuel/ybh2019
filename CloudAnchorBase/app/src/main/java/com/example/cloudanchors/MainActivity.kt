@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                 snackbarHelper.showMessageWithDismiss(this, "Error hosting anchor...")
                 appAnchorState = AppAnchorState.NONE
             } else if (cloudState == CloudAnchorState.SUCCESS) {
-                val shortCode = storageManager.nextShortCode(this)
+                val shortCode = storageManager.getTime();//storageManager.nextShortCode(this)
                 storageManager.storeUsingShortCode(this, shortCode, cloudAnchor?.cloudAnchorId)
                 snackbarHelper.showMessageWithDismiss(this, "Anchor hosted: $shortCode")
                 appAnchorState = AppAnchorState.HOSTED
