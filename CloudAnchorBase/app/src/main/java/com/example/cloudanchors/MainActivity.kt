@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import com.google.ar.core.Anchor.CloudAnchorState
 import com.google.ar.sceneform.math.Vector3
 import android.widget.Toast
+import com.google.ar.sceneform.rendering.ViewRenderable
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +24,9 @@ class MainActivity : AppCompatActivity() {
 
     // global renderable
     var modelRenderable: ModelRenderable? = null
+
+    // global view renderable (buttons)
+    var pickupSelectionRenderable : ViewRenderable? = null
 
     enum class AppAnchorState {
         NONE,
@@ -91,6 +95,23 @@ class MainActivity : AppCompatActivity() {
                 //Alter the real world position
                 transformableNode.worldPosition = Vector3(0f, 0f, 0f)
                 transformableNode.select() // Sets this as the selected node in the TransformationSystem if there is no currently selected node or if the currently selected node is not actively being transformed.
+
+                transformableNode.setOnTapListener { hitTestResult, motionEvent ->
+                    Toast.makeText(applicationContext, "Bonsai tapped, please make a choice", Toast.LENGTH_SHORT).show()
+
+                    if(this@MainActivity.pickupSelectionRenderable == null) {
+                        ViewRenderable.builder().setView(this, R.layout.pickup_selection).build()
+                            .thenAccept { renderable ->
+                                this@MainActivity.pickupSelectionRenderable = renderable
+                            };
+                    }
+
+                    val buttonTransformable  = TransformableNode(arFragment.transformationSystem)
+                    buttonTransformable.renderable = this@MainActivity.pickupSelectionRenderable
+                    buttonTransformable.setParent(anchorNode)
+                    transformableNode.worldPosition = Vector3(0f, 0f, 0f)
+
+                }
 
 
                 snackbarHelper.showMessageWithDismiss(this, "anchorNode is at " + anchorNode.worldPosition.toString() + "\nbonsai is at " + transformableNode.worldPosition.toString())
