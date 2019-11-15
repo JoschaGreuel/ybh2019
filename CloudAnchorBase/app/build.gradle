@@ -58,3 +58,19 @@ sceneform.asset('sampledata/GlassOfBeer/GlassOfBeer.obj',
         'default',
         'sampledata/GlassOfBeer/GlassOfBeer.sfa',
         'src/main/assets/GlassOfBeer')
+
+
+sceneform.asset('sampledata/hotdog/CHAHIN_HOTDOG.obj',
+        'default',
+        'sampledata/hotdog/CHAHIN_HOTDOG.sfa',
+        'src/main/assets/CHAHIN_HOTDOG')
+
+sceneform.asset('sampledata/pin/model.obj',
+        'default',
+        'sampledata/pin/model.sfa',
+        'src/main/assets/pin')
+
+sceneform.asset('sampledata/Arrow/model.obj',
+        'default',
+        'sampledata/Arrow/model.sfa',
+        'src/main/assets/arrow')

@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         //Create the beer renderable
         ModelRenderable.builder()
             //get the context of the ARFragment and pass the name of your .sfb file
-            .setSource(arFragment.context, Uri.parse("model.sfb"))
+            .setSource(arFragment.context, Uri.parse("GlassOfBeer.sfb"))
             .build()
 
             //I accepted the CompletableFuture using Async since I created my model on creation of the activity. You could simply use .thenAccept too.
@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity() {
             appAnchorState = AppAnchorState.HOSTING
             snackbarHelper.showMessage(this, "Hosting anchor")
 
-            placeObject(arFragment, cloudAnchor!!, Uri.parse("GlassOfBeer.sfb"))
+            placeObject(arFragment, cloudAnchor!!, Uri.parse("pin.sfb"))
 
         }
 
@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity() {
         //val cloudAnchorId = storageManager.getCloudAnchorID(this, shortCode)
         val resolvedAnchor = arFragment.arSceneView.session?.resolveCloudAnchor(cloudAnchorId)
         cloudAnchor(resolvedAnchor)
-        placeObject(arFragment, cloudAnchor!!, Uri.parse("GlassOfBeer.sfb"))
+        placeObject(arFragment, cloudAnchor!!, Uri.parse("pin.sfb"))
         snackbarHelper.showMessage(this, "Now resolving anchor...")
         appAnchorState = AppAnchorState.RESOLVING
     }

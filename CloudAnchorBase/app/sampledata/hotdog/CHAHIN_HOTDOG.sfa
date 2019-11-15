@@ -1,24 +1,24 @@
 {
   materials: [
     {
-      name: 'lambert2SG',
+      name: 'Material.004',
       parameters: [
         {
-          baseColor: 'GlassOfBeer_BaseColor',
+          baseColor: 'CHAHIN_HOTDOG_TEXTURE',
         },
         {
           baseColorTint: [
-            0.5,
-            0.5,
-            0.5,
+            0.64000000000000001,
+            0.64000000000000001,
+            0.64000000000000001,
             1,
           ],
         },
         {
-          metallic: 0,
+          metallic: 1,
         },
         {
-          roughness: 1,
+          roughness: 0.14280000000000001,
         },
         {
           opacity: null,
@@ -34,16 +34,16 @@
       'Orientation',
     ],
     collision: {},
-    file: 'sampledata/GlassOfBeer/GlassOfBeer.obj',
-    name: 'GlassOfBeer',
+    file: 'sampledata/hotdog/CHAHIN_HOTDOG.obj',
+    name: 'CHAHIN_HOTDOG',
     recenter: 'root',
-    scale: 0.06020900000000003,
+    scale: 0.500000
   },
   samplers: [
     {
-      file: 'sampledata/GlassOfBeer/GlassOfBeer_BaseColor.png',
-      name: 'GlassOfBeer_BaseColor',
-      pipeline_name: 'GlassOfBeer_BaseColor.png',
+      file: 'sampledata/hotdog/CHAHIN_HOTDOG_TEXTURE.jpg',
+      name: 'CHAHIN_HOTDOG_TEXTURE',
+      pipeline_name: 'CHAHIN_HOTDOG_TEXTURE.jpg',
     },
   ],
   version: '0.54:2',
