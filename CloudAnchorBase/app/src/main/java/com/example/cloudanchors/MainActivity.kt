@@ -13,6 +13,17 @@ import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
 import kotlinx.android.synthetic.main.activity_main.*
 import com.google.ar.core.Anchor.CloudAnchorState
+import android.content.ClipboardManager
+import android.R.attr.label
+import android.content.ClipData
+import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -73,8 +84,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onResolveOkPressed(dialogVal: String) {
-        val shortCode = dialogVal.toInt()
-        val cloudAnchorId = storageManager.getCloudAnchorID(this, shortCode)
+        //val shortCode = dialogVal.toInt()
+        val cloudAnchorId = dialogVal
+        //val cloudAnchorId = storageManager.getCloudAnchorID(this, shortCode)
         val resolvedAnchor = arFragment.arSceneView.session?.resolveCloudAnchor(cloudAnchorId)
         cloudAnchor(resolvedAnchor)
         placeObject(arFragment, cloudAnchor!!, Uri.parse("GlassOfBeer.sfb"))
@@ -98,9 +110,12 @@ class MainActivity : AppCompatActivity() {
                 snackbarHelper.showMessageWithDismiss(this, "Error hosting anchor...")
                 appAnchorState = AppAnchorState.NONE
             } else if (cloudState == CloudAnchorState.SUCCESS) {
-                val shortCode = storageManager.getTime();//storageManager.nextShortCode(this)
-                storageManager.storeUsingShortCode(this, shortCode, cloudAnchor?.cloudAnchorId)
-                snackbarHelper.showMessageWithDismiss(this, "Anchor hosted: $shortCode")
+                //val shortCode = storageManager.getTime();//storageManager.nextShortCode(this)
+                //storageManager.storeUsingShortCode(this, shortCode, cloudAnchor?.cloudAnchorId)
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("ID", cloudAnchor?.cloudAnchorId)
+                clipboard.setPrimaryClip(clip)
+                snackbarHelper.showMessageWithDismiss(this, "Anchor hosted, key in Clipboard.")// $shortCode")
                 appAnchorState = AppAnchorState.HOSTED
             }
         } else if (appAnchorState == AppAnchorState.RESOLVING) {

@@ -35,10 +35,10 @@ public class ResolveDialogFragment extends DialogFragment {
         Context context = getContext();
         LinearLayout layout = new LinearLayout(context);
         shortCodeField = new EditText(context);
-        shortCodeField.setInputType(InputType.TYPE_CLASS_NUMBER);
+        shortCodeField.setInputType(InputType.TYPE_CLASS_TEXT);
         shortCodeField.setLayoutParams(
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        shortCodeField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(8)});
+        shortCodeField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(100)});
         layout.addView(shortCodeField);
         layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         return layout;
