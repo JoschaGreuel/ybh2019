@@ -22,13 +22,17 @@ import androidx.core.app.ComponentActivity
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
+import com.google.ar.sceneform.math.Vector3
+import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var arFragment: CloudAnchorFragment
     var cloudAnchor: Anchor? = null
+
+    // global renderable
+    var modelRenderable: ModelRenderable? = null
 
     enum class AppAnchorState {
         NONE,
@@ -51,6 +55,16 @@ class MainActivity : AppCompatActivity() {
         arFragment.planeDiscoveryController.hide()
         arFragment.planeDiscoveryController.setInstructionView(null)
 
+        //Create the beer renderable
+        ModelRenderable.builder()
+            //get the context of the ARFragment and pass the name of your .sfb file
+            .setSource(arFragment.context, Uri.parse("model.sfb"))
+            .build()
+
+            //I accepted the CompletableFuture using Async since I created my model on creation of the activity. You could simply use .thenAccept too.
+            //Use the returned modelRenderable and save it to a global variable of the same name
+            .thenAcceptAsync { modelRenderable -> this@MainActivity.modelRenderable = modelRenderable }
+
         btn_clear.setOnClickListener {
             cloudAnchor(null)
         }
@@ -64,6 +78,37 @@ class MainActivity : AppCompatActivity() {
             val dialog = ResolveDialogFragment()
             dialog.setOkListener(this::onResolveOkPressed)
             dialog.show(supportFragmentManager, "Resolve")
+        }
+
+        btn_drawBeer.setOnClickListener{
+            Toast.makeText(applicationContext, "trying to draw beer", Toast.LENGTH_SHORT).show()
+
+            // snackbarHelper.showMessage(this, "O zapf isch!")
+
+            //create a new TranformableNode that will carry our object
+            val transformableNode = TransformableNode(arFragment.transformationSystem)
+
+            if(this@MainActivity.cloudAnchor != null) {
+                Toast.makeText(applicationContext, "Cloud anchor available. Setting transformableNode", Toast.LENGTH_SHORT).show()
+
+                val anchorNode = AnchorNode(this@MainActivity.cloudAnchor)
+                transformableNode.setParent(anchorNode)
+                transformableNode.renderable = this@MainActivity.modelRenderable
+                transformableNode.scaleController.isEnabled = true
+
+                arFragment.arSceneView.scene.addChild(anchorNode)
+
+                //Alter the real world position
+                transformableNode.worldPosition = Vector3(0f, 0f, 0f)
+                transformableNode.select() // Sets this as the selected node in the TransformationSystem if there is no currently selected node or if the currently selected node is not actively being transformed.
+
+
+                snackbarHelper.showMessageWithDismiss(this, "anchorNode is at " + anchorNode.worldPosition.toString() + "\nbonsai is at " + transformableNode.worldPosition.toString())
+
+
+            } else {
+                Toast.makeText(applicationContext, "Error: Cloud anchor not available", Toast.LENGTH_SHORT).show()
+            }
         }
 
         arFragment.setOnTapArPlaneListener { hitResult, plane, _ ->
