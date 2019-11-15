@@ -9,7 +9,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
     defaultConfig {
-        applicationId "com.example.cloudanchors"
+        applicationId "com.powerandstyle.cloudanchors"
         minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
@@ -40,6 +40,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // Provides ARCore Session and related resources.
+    implementation 'com.google.firebase:firebase-messaging:20.0.1'
     implementation 'com.google.ar:core:1.10.0'
 
     // Provides ArFragment, and other UX resources.
@@ -50,6 +51,8 @@ dependencies {
 
 
 }
+
+apply plugin: 'com.google.gms.google-services'
 
 sceneform.asset('sampledata/bonsai/model.obj',
         'default',

@@ -29,8 +29,11 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import com.google.ar.sceneform.rendering.ViewRenderable
 import android.content.Intent
+import android.util.Log
 import android.os.StrictMode
 import android.view.View
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.pickup_selection.*
 import okhttp3.*
 import java.net.URL
@@ -272,6 +275,28 @@ class MainActivity : AppCompatActivity() {
         snackbarHelper.hide(this)
     }
 
+    private fun sendtoFirebase() {
+        // Get current Firebase token
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+
+                // Log and toast
+                val msg = getString(R.string.msg_token_fmt, token)
+                Log.d(TAG, msg)
+                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("ID", getString(R.string.msg_token_fmt, token))
+                clipboard.setPrimaryClip(clip)
+            })
+    }
+
     private fun placeObject(fragment: ArFragment, anchor: Anchor, model: Uri) {
         ModelRenderable.Builder()
             .setSource(fragment.context, model)
@@ -295,6 +320,11 @@ class MainActivity : AppCompatActivity() {
         transformableNode.setParent(node)
         fragment.arSceneView.scene.addChild(node)
         transformableNode.select()
+    }
+
+    companion object {
+
+        private const val TAG = "MainActivity"
     }
 
 }
