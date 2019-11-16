@@ -41,7 +41,6 @@ import java.io.IOException;
 import org.json.JSONObject
 
 import android.app.Activity
-import android.os.Bundle
 
 class MainActivity : AppCompatActivity() {
 
