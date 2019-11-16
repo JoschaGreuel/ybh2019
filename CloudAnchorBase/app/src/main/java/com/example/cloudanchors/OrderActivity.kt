@@ -31,6 +31,7 @@ class OrderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order)
         text_wurst.setVisibility(View.INVISIBLE)
+        text_beer.setVisibility(View.INVISIBLE)
         btn_wurst.setOnClickListener{
             val url = "https://api.myjson.com/bins/x1ryy"
             var request = Request.Builder().url(url).build()
@@ -44,6 +45,21 @@ class OrderActivity : AppCompatActivity() {
                 .build();
             client.newCall(request).execute()
             text_wurst.setVisibility(View.VISIBLE)
+        }
+        btn_beer.setOnClickListener{
+            val url = "https://api.myjson.com/bins/x1ryy"
+            var request = Request.Builder().url(url).build()
+            val client = OkHttpClient()
+            val JSON = MediaType.parse("application/json; charset=utf-8")
+
+            var body = RequestBody.create(JSON, "{\"cloudAnchorId\":\"$cloudAnchorID\",\"orderItem\":\"beer\",\"location\":{\"x\":\"$x\",\"y\":\"$y\",\"z\":\"$z\"},\"timestamp\":\"$timestamp\",\"userID\":\"666\"}")
+            request = Request.Builder()
+                .url(url)
+                .put(body) // here we use put
+                .build();
+            client.newCall(request).execute()
+            text_beer.setVisibility(View.VISIBLE)
+
         }
     }
     override fun onBackPressed() {

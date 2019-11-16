@@ -172,20 +172,20 @@ class MainActivity : AppCompatActivity() {
                 transformableNode.worldPosition = Vector3(anchorNode.worldPosition.x+location_x.toFloat(), anchorNode.worldPosition.y+location_y.toFloat(), anchorNode.worldPosition.z+location_z.toFloat())
                 transformableNode.select() // Sets this as the selected node in the TransformationSystem if there is no currently selected node or if the currently selected node is not actively being transformed.
 
+                if(this@MainActivity.pickupSelectionRenderable == null) {
+                    ViewRenderable.builder().setView(this, R.layout.pickup_selection).build()
+                        .thenAccept { renderable ->
+                            this@MainActivity.pickupSelectionRenderable = renderable
+                        };
+                }
+
                 transformableNode.setOnTapListener { hitTestResult, motionEvent ->
                     Toast.makeText(applicationContext, "Order selected, please make a choice", Toast.LENGTH_SHORT).show()
-
-                    if(this@MainActivity.pickupSelectionRenderable == null) {
-                        ViewRenderable.builder().setView(this, R.layout.pickup_selection).build()
-                            .thenAccept { renderable ->
-                                this@MainActivity.pickupSelectionRenderable = renderable
-                            };
-                    }
 
                     val buttonTransformable  = TransformableNode(arFragment.transformationSystem)
                     buttonTransformable.renderable = this@MainActivity.pickupSelectionRenderable
                     buttonTransformable.setParent(anchorNode)
-                    transformableNode.worldPosition = Vector3(location_x.toFloat(), location_y.toFloat(), location_z.toFloat()-0.2f)
+                    buttonTransformable.worldPosition = Vector3(anchorNode.worldPosition.x+location_x.toFloat(), anchorNode.worldPosition.y+location_y.toFloat(), anchorNode.worldPosition.z+location_z.toFloat()-0.2f)
 
                     if(this@MainActivity.pickupSelectionRenderable != null) {
 
