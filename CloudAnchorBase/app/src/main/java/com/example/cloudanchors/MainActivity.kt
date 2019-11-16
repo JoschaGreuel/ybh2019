@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         btn_menu.setVisibility(View.INVISIBLE)
 
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build())
-        
+
         //Create the beer renderable
         ModelRenderable.builder()
             //get the context of the ARFragment and pass the name of your .sfb file
@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
             intent1.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP //
             intent1.putExtra("CloudAnchorId",cloudAnchor?.cloudAnchorId)
             val cameraPosition = arFragment.getArSceneView().getScene().getCamera().worldPosition
+            //val pinPosition = cloudAnchor.pose.extractTranslation().translation.
             intent1.putExtra("cameraPosition_x",cameraPosition.x.toString())
             intent1.putExtra("cameraPosition_y",cameraPosition.y.toString())
             intent1.putExtra("cameraPosition_z",cameraPosition.z.toString())
@@ -150,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             snackbarHelper.showMessage(this, "orderItem: " + orderItem)
 
 
-            //create a new TranformableNode that will carry our object
+            //create a new TransformableNode that will carry our object
             val transformableNode = TransformableNode(arFragment.transformationSystem)
 
             if(this@MainActivity.cloudAnchor != null) {
@@ -167,11 +168,11 @@ class MainActivity : AppCompatActivity() {
                 arFragment.arSceneView.scene.addChild(anchorNode)
 
                 //Alter the real world position
-                transformableNode.worldPosition = Vector3(location_x.toFloat(), location_y.toFloat(), location_z.toFloat())
+                transformableNode.worldPosition = Vector3(anchorNode.worldPosition.x+location_x.toFloat(), anchorNode.worldPosition.y+location_y.toFloat(), anchorNode.worldPosition.z+location_z.toFloat())
                 transformableNode.select() // Sets this as the selected node in the TransformationSystem if there is no currently selected node or if the currently selected node is not actively being transformed.
 
                 transformableNode.setOnTapListener { hitTestResult, motionEvent ->
-                    Toast.makeText(applicationContext, "Bonsai tapped, please make a choice", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Order selected, please make a choice", Toast.LENGTH_SHORT).show()
 
                     if(this@MainActivity.pickupSelectionRenderable == null) {
                         ViewRenderable.builder().setView(this, R.layout.pickup_selection).build()
@@ -183,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                     val buttonTransformable  = TransformableNode(arFragment.transformationSystem)
                     buttonTransformable.renderable = this@MainActivity.pickupSelectionRenderable
                     buttonTransformable.setParent(anchorNode)
-                    transformableNode.worldPosition = Vector3(0f, 0f, 0f)
+                    transformableNode.worldPosition = Vector3(location_x.toFloat(), location_y.toFloat(), location_z.toFloat()-0.2f)
 
                     if(this@MainActivity.pickupSelectionRenderable != null) {
 
@@ -191,20 +192,20 @@ class MainActivity : AppCompatActivity() {
 
                         val pickupSelectionLayout =
                             this@MainActivity.pickupSelectionRenderable!!.getView() as LinearLayout
-
+                        pickupSelectionLayout.alpha = 1f
 
                         val acceptButton = pickupSelectionLayout.getChildAt(0) as Button
                         acceptButton.setOnClickListener{
                             Toast.makeText(
                                 applicationContext,
-                                "Order accepted. Now move!",
+                                "Order accepted!",
                                 Toast.LENGTH_SHORT
-                            ).show();
-
+                            ).show()
+                            pickupSelectionLayout.alpha = 0f
                             // now remove all rendered elements again
-                            arFragment.arSceneView.scene.removeChild(anchorNode)
-                            anchorNode.anchor!!.detach()
-                            anchorNode.setParent(null)
+                            //arFragment.arSceneView.scene.removeChild(anchorNode)
+                            //anchorNode.anchor!!.detach()
+                            //anchorNode.setParent(null)
                         }
 
                     } else {
@@ -213,7 +214,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
 
-                snackbarHelper.showMessageWithDismiss(this, "anchorNode is at " + anchorNode.worldPosition.toString() + "\nbonsai is at " + transformableNode.worldPosition.toString())
+                //snackbarHelper.showMessageWithDismiss(this, "anchorNode is at " + anchorNode.worldPosition.toString() + "\nbonsai is at " + transformableNode.worldPosition.toString())
 
 
             } else {
@@ -244,7 +245,7 @@ class MainActivity : AppCompatActivity() {
         //val cloudAnchorId = storageManager.getCloudAnchorID(this, shortCode)
         val resolvedAnchor = arFragment.arSceneView.session?.resolveCloudAnchor(cloudAnchorId)
         cloudAnchor(resolvedAnchor)
-        placeObject(arFragment, cloudAnchor!!, Uri.parse("pin.sfb"))
+        //placeObject(arFragment, cloudAnchor!!, Uri.parse("pin.sfb"))
         snackbarHelper.showMessage(this, "Now resolving anchor...")
         appAnchorState = AppAnchorState.RESOLVING
     }
