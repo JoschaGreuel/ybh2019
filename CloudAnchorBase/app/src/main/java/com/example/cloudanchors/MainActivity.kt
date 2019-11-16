@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                     val buttonTransformable  = TransformableNode(arFragment.transformationSystem)
                     buttonTransformable.renderable = this@MainActivity.pickupSelectionRenderable
                     buttonTransformable.setParent(anchorNode)
-                    transformableNode.worldPosition = Vector3(location_x.toFloat(), location_y.toFloat(), location_z.toFloat()-0.2f)
+                    buttonTransformable.worldPosition = Vector3(anchorNode.worldPosition.x+location_x.toFloat(), anchorNode.worldPosition.y+location_y.toFloat(), anchorNode.worldPosition.z+location_z.toFloat()-0.2f)
 
                     if(this@MainActivity.pickupSelectionRenderable != null) {
 
