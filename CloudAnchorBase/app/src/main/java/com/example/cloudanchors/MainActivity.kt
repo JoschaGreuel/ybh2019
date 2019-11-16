@@ -115,9 +115,9 @@ class MainActivity : AppCompatActivity() {
             intent1.putExtra("CloudAnchorId",cloudAnchor?.cloudAnchorId)
             val cameraPosition = arFragment.getArSceneView().getScene().getCamera().worldPosition
             //val pinPosition = cloudAnchor.pose.extractTranslation().translation.
-            intent1.putExtra("cameraPosition_x",cameraPosition.x.toString())
-            intent1.putExtra("cameraPosition_y",cameraPosition.y.toString())
-            intent1.putExtra("cameraPosition_z",cameraPosition.z.toString())
+            intent1.putExtra("cameraPosition_x",(cameraPosition.x - cloudAnchor!!.pose.tx()).toString())
+            intent1.putExtra("cameraPosition_y",(cameraPosition.y - cloudAnchor!!.pose.ty()).toString())
+            intent1.putExtra("cameraPosition_z",(cameraPosition.z - cloudAnchor!!.pose.tz()).toString())
             //Camera.getDisplayOrientedPose()
             this.startActivity(intent1)
             finish()
