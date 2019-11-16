@@ -31,6 +31,7 @@ import com.google.ar.sceneform.rendering.ViewRenderable
 import android.content.Intent
 import android.os.StrictMode
 import android.view.View
+import com.google.ar.core.Camera
 import kotlinx.android.synthetic.main.pickup_selection.*
 import okhttp3.*
 import java.net.URL
@@ -80,16 +81,6 @@ class MainActivity : AppCompatActivity() {
         val client = OkHttpClient()
         val response = client.newCall(request).execute()
 
-        snackbarHelper.showMessageWithDismiss(this, response.body()!!.string())
-
-        val JSON = MediaType.parse("application/json; charset=utf-8")
-        var body = RequestBody.create(JSON, "{\"key_updated\":\"value_updated\"}")
-        request = Request.Builder()
-            .url(url)
-            .put(body) // here we use put
-            .build();
-        client.newCall(request).execute()
-
 
         //Create the beer renderable
         ModelRenderable.builder()
@@ -118,6 +109,12 @@ class MainActivity : AppCompatActivity() {
         btn_menu.setOnClickListener{
             val intent1 = Intent(this, OrderActivity::class.java)
             intent1.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP //
+            intent1.putExtra("CloudAnchorId",cloudAnchor?.cloudAnchorId)
+            val cameraPosition = arFragment.getArSceneView().getScene().getCamera().worldPosition
+            intent1.putExtra("cameraPosition_x",cameraPosition.x.toString())
+            intent1.putExtra("cameraPosition_y",cameraPosition.y.toString())
+            intent1.putExtra("cameraPosition_z",cameraPosition.z.toString())
+            //Camera.getDisplayOrientedPose()
             this.startActivity(intent1)
             finish()
         }
