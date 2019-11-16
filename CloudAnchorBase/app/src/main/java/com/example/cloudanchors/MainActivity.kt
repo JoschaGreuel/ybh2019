@@ -172,15 +172,15 @@ class MainActivity : AppCompatActivity() {
                 transformableNode.worldPosition = Vector3(anchorNode.worldPosition.x+location_x.toFloat(), anchorNode.worldPosition.y+location_y.toFloat(), anchorNode.worldPosition.z+location_z.toFloat())
                 transformableNode.select() // Sets this as the selected node in the TransformationSystem if there is no currently selected node or if the currently selected node is not actively being transformed.
 
+                if(this@MainActivity.pickupSelectionRenderable == null) {
+                    ViewRenderable.builder().setView(this, R.layout.pickup_selection).build()
+                        .thenAccept { renderable ->
+                            this@MainActivity.pickupSelectionRenderable = renderable
+                        };
+                }
+
                 transformableNode.setOnTapListener { hitTestResult, motionEvent ->
                     Toast.makeText(applicationContext, "Order selected, please make a choice", Toast.LENGTH_SHORT).show()
-
-                    if(this@MainActivity.pickupSelectionRenderable == null) {
-                        ViewRenderable.builder().setView(this, R.layout.pickup_selection).build()
-                            .thenAccept { renderable ->
-                                this@MainActivity.pickupSelectionRenderable = renderable
-                            };
-                    }
 
                     val buttonTransformable  = TransformableNode(arFragment.transformationSystem)
                     buttonTransformable.renderable = this@MainActivity.pickupSelectionRenderable
@@ -208,6 +208,9 @@ class MainActivity : AppCompatActivity() {
                             //anchorNode.anchor!!.detach()
                             //anchorNode.setParent(null)
                         }
+
+                        val nopeButton = pickupSelectionLayout.getChildAt(1) as Button
+                        nopeButton.setOnClickListener{pickupSelectionLayout.alpha = 0f}
 
                     } else {
                         Toast.makeText(applicationContext, "PickupSelectionRenderable is null", Toast.LENGTH_SHORT).show()
