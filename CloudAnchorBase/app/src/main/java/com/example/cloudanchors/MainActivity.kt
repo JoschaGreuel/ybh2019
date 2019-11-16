@@ -209,6 +209,9 @@ class MainActivity : AppCompatActivity() {
                             //anchorNode.setParent(null)
                         }
 
+                        val nopeButton = pickupSelectionLayout.getChildAt(1) as Button
+                        nopeButton.setOnClickListener{pickupSelectionLayout.alpha = 0f}
+
                     } else {
                         Toast.makeText(applicationContext, "PickupSelectionRenderable is null", Toast.LENGTH_SHORT).show()
                     }
