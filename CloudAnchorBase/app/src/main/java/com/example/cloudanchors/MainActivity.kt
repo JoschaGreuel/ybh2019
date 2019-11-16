@@ -37,6 +37,7 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
 import java.io.IOException;
+import org.json.JSONObject
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,8 +45,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var arFragment: CloudAnchorFragment
     var cloudAnchor: Anchor? = null
 
-    // global renderable
-    var modelRenderable: ModelRenderable? = null
+    // global renderables
+    var beerModelRenderable: ModelRenderable? = null
+    var hotdogModelRenderable : ModelRenderable? = null
 
     // global view renderable (buttons)
     var pickupSelectionRenderable : ViewRenderable? = null
@@ -75,22 +77,6 @@ class MainActivity : AppCompatActivity() {
 
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build())
 
-        val url = "https://api.myjson.com/bins/x1ryy"
-        var request = Request.Builder().url(url).build()
-        val client = OkHttpClient()
-        val response = client.newCall(request).execute()
-
-        snackbarHelper.showMessageWithDismiss(this, response.body()!!.string())
-
-        val JSON = MediaType.parse("application/json; charset=utf-8")
-        var body = RequestBody.create(JSON, "{\"key_updated\":\"value_updated\"}")
-        request = Request.Builder()
-            .url(url)
-            .put(body) // here we use put
-            .build();
-        client.newCall(request).execute()
-
-
         //Create the beer renderable
         ModelRenderable.builder()
             //get the context of the ARFragment and pass the name of your .sfb file
@@ -99,7 +85,13 @@ class MainActivity : AppCompatActivity() {
 
             //I accepted the CompletableFuture using Async since I created my model on creation of the activity. You could simply use .thenAccept too.
             //Use the returned modelRenderable and save it to a global variable of the same name
-            .thenAcceptAsync { modelRenderable -> this@MainActivity.modelRenderable = modelRenderable }
+            .thenAcceptAsync { modelRenderable -> this@MainActivity.beerModelRenderable = modelRenderable }
+
+        //Create the hotdog renderable
+        ModelRenderable.builder()
+            .setSource(arFragment.context, Uri.parse("CHAHIN_HOTDOG.sfb"))
+            .build()
+            .thenAcceptAsync { modelRenderable -> this@MainActivity.hotdogModelRenderable = modelRenderable }
 
         btn_clear.setOnClickListener {
             cloudAnchor(null)
@@ -123,9 +115,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_drawBeer.setOnClickListener{
-            Toast.makeText(applicationContext, "trying to draw beer", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Looking for orders...", Toast.LENGTH_SHORT).show()
 
-            // snackbarHelper.showMessage(this, "O zapf isch!")
+            val url = "https://api.myjson.com/bins/x1ryy"
+            var request = Request.Builder().url(url).build()
+            val client = OkHttpClient()
+            val response = client.newCall(request).execute()
+
+            if(response.body() == null){
+                return@setOnClickListener
+            }
+
+            val jsonObj = JSONObject(response.body()!!.string())
+            val orderItem = jsonObj.getString("orderItem")
+            val cloudAnchorId = jsonObj.getString("cloudAnchorId")
+            val location = jsonObj.getJSONObject("location")
+            val location_x = location.getDouble("x")
+            val location_y = location.getDouble("y")
+            val location_z = location.getDouble("z")
+
+
+            if(appAnchorState == AppAnchorState.NONE) {
+                Toast.makeText(applicationContext, "Trying to localize...", Toast.LENGTH_SHORT).show()
+                onResolveOkPressed(cloudAnchorId)
+            }
+
+            snackbarHelper.showMessage(this, "orderItem: " + orderItem)
+
 
             //create a new TranformableNode that will carry our object
             val transformableNode = TransformableNode(arFragment.transformationSystem)
@@ -135,13 +151,16 @@ class MainActivity : AppCompatActivity() {
 
                 val anchorNode = AnchorNode(this@MainActivity.cloudAnchor)
                 transformableNode.setParent(anchorNode)
-                transformableNode.renderable = this@MainActivity.modelRenderable
+                if(orderItem == "beer") {
+                    transformableNode.renderable = this@MainActivity.beerModelRenderable
+                } else {
+                    transformableNode.renderable = this@MainActivity.hotdogModelRenderable
+                }
                 transformableNode.scaleController.isEnabled = true
-
                 arFragment.arSceneView.scene.addChild(anchorNode)
 
                 //Alter the real world position
-                transformableNode.worldPosition = Vector3(0f, 0f, 0f)
+                transformableNode.worldPosition = Vector3(location_x.toFloat(), location_y.toFloat(), location_z.toFloat())
                 transformableNode.select() // Sets this as the selected node in the TransformationSystem if there is no currently selected node or if the currently selected node is not actively being transformed.
 
                 transformableNode.setOnTapListener { hitTestResult, motionEvent ->
